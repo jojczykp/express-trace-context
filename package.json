@@ -1,0 +1,20 @@
+{
+  "name": "express-trace-context",
+  "version": "0.0.1",
+  "description": "express trace context",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "express",
+    "open-trace",
+    "trace",
+    "trace-context"
+  ],
+  "author": "Pawel Jojczyk",
+  "license": "MIT",
+  "dependencies": {
+    "typescript": "^4.5.5"
+  }
+}
