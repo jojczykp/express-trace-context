@@ -12,7 +12,7 @@ export interface TraceContext {
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
     const traceId = '1234'
-    const childId = '56'
+    const childId = req.header('child-id')
 
     const traceContext: TraceContext = {
         parentId: req.header('parent-id'),
