@@ -1,29 +1,34 @@
 import { AsyncLocalStorage } from 'async_hooks'
 import { NextFunction, Request, Response } from 'express'
 
+const FLAG_SAMPLED = 0b00000001
+
 const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 
 export interface TraceContext {
-    parentId?: string,
-    childId?: string,
+    version: string,
     traceId?: string,
-    traceResponse?: string
+    parentId?: string,
+    isSampled?: boolean
 }
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
-    const traceId = '1234'
-    const childId = req.header('child-id')
+    const traceParent = req.header('traceparent')
+    const [version, traceId, upstreamParentId, flags] = traceParent!.split('-')
+
+    const parentId = '1234567890abcdef'
+    const isSampled = (+flags & FLAG_SAMPLED) == FLAG_SAMPLED
 
     const traceContext: TraceContext = {
-        parentId: req.header('parent-id'),
-        childId,
+        version,
         traceId,
-        traceResponse: `00-${traceId}-${childId}-00`
+        parentId,
+        isSampled
     }
 
     setTraceContext(traceContext)
 
-    res.header('traceresponse',  traceContext.traceResponse)
+    // res.header('traceresponse',  traceContext.traceResponse)
     next()
 }
 
