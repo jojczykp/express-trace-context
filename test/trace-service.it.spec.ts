@@ -2,8 +2,8 @@ import express from 'express'
 import request from 'supertest'
 import { getTraceContext, traceMiddleware } from '../src/trace-service'
 
-describe('Trace Service', () => {
-    it('should deliver express middleware that injects trace context', (done) => {
+describe('Trace Service deliver express middleware that', () => {
+    it('should inject trace context (even if wrapped with async middleware)', (done) => {
         let server = express()
             .use(traceMiddleware)
             .get('/', (req, res) => {
@@ -13,13 +13,15 @@ describe('Trace Service', () => {
 
         request(server)
             .get('/')
-            .set('parent-id', 'p')
-            .set('child-id', 'c')
-            .expect({ parentId: 'p', childId: 'c', traceId: '1234', traceResponse: '00-1234-c-00' })
+            .set('traceparent', '00-123456789abcd-12ab-01')
+            .expect({ version: '00', traceId: '123456789abcd', parentId: '1234567890abcdef', isSampled: true })
             .end((err) => {
-                server.close()
-                expect(err).toBeNull()
-                done()
+                try {
+                    server.close()
+                    expect(err).toBeNull()
+                } finally {
+                    done()
+                }
             })
     })
 })
