@@ -2,7 +2,7 @@ import express, { json } from 'express'
 import request from 'supertest'
 import {getTraceContext, traceMiddleware} from '../src/trace-service'
 
-describe('Trace Service deliver express middleware that', () => {
+describe('Trace Service middleware', () => {
     it('should inject trace context', (done) => {
         let server = express()
             .use(traceMiddleware)
@@ -26,7 +26,7 @@ describe('Trace Service deliver express middleware that', () => {
     it('should inject trace context even if wrapped with async middleware', (done) => {
         let server = express()
             .use(traceMiddleware)
-            .use(json()) // middleware with async call if body present (read from socket)
+            .use(json()) // middleware with async call if body present (reads from socket)
             .post('/', (req, res) => res.json(getTraceContext()).end())
             .listen()
 
