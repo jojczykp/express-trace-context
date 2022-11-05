@@ -43,9 +43,9 @@ export function getTraceContext(): TraceContext | undefined {
 export function setTraceContext(traceContext: TraceContext | undefined) {
     if (traceContext) {
         // Recommended way is to use `AsyncLocalStorage.run()`.
-        // Unfortunately that not always work, i.e. in case of async middlewares:
-        // https://github.com/expressjs/express/issues/4396
-        // Therefore with express4 we use older way as follows.
+        // Unfortunately that not always works, i.e. in case of async middlewares.
+        // See: https://github.com/expressjs/express/issues/4396
+        // Therefore with express4 we use older way as follows:
         asyncLocalStorage.enterWith(traceContext)
     } else {
         asyncLocalStorage.disable()
