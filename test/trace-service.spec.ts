@@ -5,20 +5,6 @@ import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from 
 
 const hexNum16 = /^[0-9a-f]{16}$/
 
-function mockRequest(headers: Record<string, string>): Request {
-    return {
-        header(h: string) {
-            return headers[h]
-        },
-    } as unknown as Request
-}
-
-function mockResponse(): Response {
-    return {
-        header: jest.fn(),
-    } as unknown as Response
-}
-
 describe('Trace Service middleware produces Trace Context that', () => {
     let traceContext: TraceContext | undefined
     let res: Response
@@ -98,3 +84,17 @@ describe('Trace Service middleware produces Trace Context that', () => {
         expect(traceContext1?.traceId).not.toEqual(traceContext2?.traceId)
     })
 })
+
+function mockRequest(headers: Record<string, string>): Request {
+    return {
+        header(h: string) {
+            return headers[h]
+        },
+    } as unknown as Request
+}
+
+function mockResponse(): Response {
+    return {
+        header: jest.fn(),
+    } as unknown as Response
+}
