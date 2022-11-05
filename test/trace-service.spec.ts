@@ -1,7 +1,7 @@
 import makeBarrier from '@strong-roots-capital/barrier'
 import { Request, Response } from 'express'
 import { expect, jest } from '@jest/globals'
-import { TraceContext, traceMiddleware, getTraceContext } from '../src/trace-service'
+import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from '../src/trace-service'
 
 const hexNum16 = /^[0-9a-f]{16}$/
 
@@ -24,8 +24,9 @@ describe('Trace Service middleware produces Trace Context that', () => {
     let res: Response
 
     beforeEach(() => {
-        traceContext = undefined
         res = mockResponse()
+        traceContext = undefined
+        setTraceContext(traceContext)
     })
 
     it('should have updated parent-id', () => {
@@ -41,15 +42,14 @@ describe('Trace Service middleware produces Trace Context that', () => {
         expect(traceContext).toBeDefined()
         expect(traceContext?.version).toEqual('00')
         expect(traceContext?.traceId).toEqual('0af7651916cd43dd8448eb211c80319c')
-        expect(traceContext?.parentId).toMatch(hexNum16)
-        expect(traceContext?.parentId).not.toEqual('b7ad6b7169203331')
+        expect(traceContext?.parentId).toEqual('b7ad6b7169203331')
+        expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeTruthy()
-        // expect(traceContext?.traceResponse).toEqual(`00-${traceContext?.traceId}-${traceContext?.childId}-00`)
-        // expect(res.header).toHaveBeenCalledWith('traceresponse', traceContext?.traceResponse)
-        // expect(res.header).toHaveBeenCalledTimes(1)
+        expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
+        expect(res.header).toBeCalledTimes(1)
     })
 
-    it('should be undefined if not traceparent header present', () => {
+    it('should be undefined if no traceparent header present', () => {
         const req = mockRequest({
             tracestate: 'vendor1=opaque1,vendor2=opaque2',
         })
@@ -61,7 +61,7 @@ describe('Trace Service middleware produces Trace Context that', () => {
         expect(traceContext).toBeUndefined()
     })
 
-    it('is a different instance for each concurrent request', async () => {
+    it('should be a different instance for each concurrent request', async () => {
         // Given
         let traceContext1: TraceContext | undefined
         let traceContext2: TraceContext | undefined
@@ -96,7 +96,5 @@ describe('Trace Service middleware produces Trace Context that', () => {
         expect(traceContext1).not.toBeUndefined()
         expect(traceContext2).not.toBeUndefined()
         expect(traceContext1?.traceId).not.toEqual(traceContext2?.traceId)
-        // expect(res1.header).toBeCalledWith('traceresponse', traceContext1?.traceResponse)
-        // expect(res2.header).toBeCalledWith('traceresponse', traceContext2?.traceResponse)
     })
 })
