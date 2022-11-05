@@ -1,7 +1,7 @@
-import { TraceContext, traceMiddleware, getTraceContext } from '../src/trace-service'
 import makeBarrier from '@strong-roots-capital/barrier'
 import { Request, Response } from 'express'
 import { expect, jest } from '@jest/globals'
+import { TraceContext, traceMiddleware, getTraceContext } from '../src/trace-service'
 
 const hexNum16 = /^[0-9a-f]{16}$/
 
@@ -15,7 +15,7 @@ function mockRequest(headers: Record<string, string>): Request {
 
 function mockResponse(): Response {
     return {
-        header: jest.fn()
+        header: jest.fn(),
     } as unknown as Response
 }
 

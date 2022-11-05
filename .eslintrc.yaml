@@ -1,0 +1,28 @@
+extends:
+  - "airbnb"
+  - "plugin:import/typescript"
+  - "plugin:@typescript-eslint/recommended"
+  - "prettier"
+plugins:
+  - "prettier"
+  - "jest"
+rules:
+  prettier/prettier:
+    - "warn"
+  import/extensions:
+    - "off"
+  no-use-before-define:
+    - "off"
+  '@typescript-eslint/no-unused-vars':
+    - "warn"
+    - argsIgnorePattern: "^_"
+      varsIgnorePattern: "^_"
+      destructuredArrayIgnorePattern: "^_"
+      caughtErrorsIgnorePattern: "^_"
+  no-underscore-dangle:
+    - "off"
+settings:
+  react:
+    version: "0.0.0" # Mute irrelevant warning: https://github.com/jsx-eslint/eslint-plugin-react/issues/2276
+env:
+  jest: true

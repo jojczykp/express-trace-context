@@ -3,27 +3,31 @@ import { NextFunction, Request, Response } from 'express'
 
 const FLAG_SAMPLED = 0b00000001
 
-const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
-
 export interface TraceContext {
-    version: string,
-    traceId?: string,
-    parentId?: string,
-    isSampled?: boolean
+    version: string
+    traceId: string
+    parentId: string
+    isSampled: boolean
 }
+
+const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
     const traceParent = req.header('traceparent')
-    const [version, traceId, upstreamParentId, flags] = traceParent!.split('-')
+    if (!traceParent) {
+        return
+    }
+
+    const [version, traceId, _upstreamParentId, flags] = traceParent.split('-')
 
     const parentId = '1234567890abcdef'
-    const isSampled = (+flags & FLAG_SAMPLED) == FLAG_SAMPLED
+    const isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
 
     const traceContext: TraceContext = {
         version,
         traceId,
         parentId,
-        isSampled
+        isSampled,
     }
 
     setTraceContext(traceContext)

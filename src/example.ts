@@ -1,5 +1,5 @@
-import { getTraceContext, traceMiddleware } from './trace-service'
 import express, { json, Router } from 'express'
+import { getTraceContext, traceMiddleware } from './trace-service'
 
 const SERVER_PORT = 3000
 
@@ -7,19 +7,18 @@ function logger(msg: string) {
     const tc = getTraceContext()
     const prefix = tc ? `[${tc?.version} ${tc?.traceId} ${tc?.parentId} ${tc?.isSampled}] ` : ''
 
-    console.log(`${prefix}${msg}`)
+    console.log(`${prefix}${msg}`) // eslint-disable-line no-console
 }
 
-const routes = Router()
-     .post('/', (req, res) => {
-         logger(`Received: ${JSON.stringify(req.body)}`)
-         res.status(200)
-         res.json({
-             traceContext: getTraceContext(),
-             requestBody: req.body
-         })
-         res.end()
+const routes = Router().post('/', (req, res) => {
+    logger(`Received: ${JSON.stringify(req.body)}`)
+    res.status(200)
+    res.json({
+        traceContext: getTraceContext(),
+        requestBody: req.body,
     })
+    res.end()
+})
 
 const server = express()
     .use(traceMiddleware)
