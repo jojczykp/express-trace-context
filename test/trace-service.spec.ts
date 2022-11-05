@@ -49,6 +49,18 @@ describe('Trace Service middleware produces Trace Context that', () => {
         // expect(res.header).toHaveBeenCalledTimes(1)
     })
 
+    it('should be undefined if not traceparent header present', () => {
+        const req = mockRequest({
+            tracestate: 'vendor1=opaque1,vendor2=opaque2',
+        })
+
+        traceMiddleware(req, res, () => {
+            traceContext = getTraceContext()
+        })
+
+        expect(traceContext).toBeUndefined()
+    })
+
     it('is a different instance for each concurrent request', async () => {
         // Given
         let traceContext1: TraceContext | undefined

@@ -12,10 +12,10 @@
     "trace-context"
   ],
   "scripts": {
-    "clean": "rm -rf node_modules package-lock.json",
+    "clean": "rm -rf node_modules package-lock.json coverage",
     "lint": "eslint './src' './test' --ext .ts",
     "lint:fix": "eslint './src' './test' --ext .ts --fix",
-    "test": "jest --coverage",
+    "test": "jest --coverage --coverageDirectory='coverage'",
     "test:watch": "jest --watch"
   },
   "dependencies": {
