@@ -22,7 +22,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
 
     const [version, traceId, parentId, flags] = traceParent.split('-')
 
-    const childId = '1234567890abcdef'
+    const childId = randomHexString(8) + randomHexString(8)
     const isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
 
     const traceContext: TraceContext = {
@@ -37,6 +37,12 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
 
     res.header('traceresponse', `${version}-${traceId}-${childId}-${isSampled ? '01' : '00'}`)
     next()
+}
+
+function randomHexString(length: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13): string {
+    return Math.random()
+        .toString(16)
+        .substring(2, length + 2)
 }
 
 export function getTraceContext(): TraceContext | undefined {
