@@ -1,6 +1,6 @@
 # Express Trace Context
 
-Trace Context for [express.js](https://expressjs.com/).
+`traceheader` based Trace Context for [express.js](https://expressjs.com/).
 
 Can be easily integrated with loggers.
 
@@ -27,3 +27,7 @@ curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddee
 - https://www.w3.org/TR/trace-context/
 - https://w3c.github.io/trace-context/
 - https://nodejs.org/api/async_context.html
+
+
+# TODOs
+- Implement rest of specification details
