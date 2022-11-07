@@ -37,6 +37,8 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
 
     res.header('traceresponse', `${version}-${traceId}-${childId}-${isSampled ? '01' : '00'}`)
     next()
+
+    // TODO: Cover all other specification details
 }
 
 function randomHexString(length: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13): string {

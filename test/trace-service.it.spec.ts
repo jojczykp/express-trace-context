@@ -4,6 +4,8 @@ import { Server } from 'http'
 import { getTraceContext, traceMiddleware } from '../src/trace-service'
 
 describe('Trace Service middleware', () => {
+    // TODO: Cover all other specification details
+
     it('should inject trace context and return traceresponse', done => {
         const server = express()
             .use(traceMiddleware)
