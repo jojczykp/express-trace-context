@@ -3,6 +3,8 @@ import { Request, Response } from 'express'
 import { expect, jest } from '@jest/globals'
 import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from '../src/trace-service'
 
+/* eslint no-return-assign: "off" */
+
 const hexNum16 = /^[0-9a-f]{16}$/
 
 describe('Trace Service middleware', () => {
@@ -21,9 +23,7 @@ describe('Trace Service middleware', () => {
             tracestate: 'vendor1=opaque3,vendor2=opaque4',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext).toBeDefined()
         expect(traceContext?.version).toEqual('00')
@@ -42,9 +42,7 @@ describe('Trace Service middleware', () => {
             tRaCeStAtE: 'vendor1=opaque5,vendor2=opaque6',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext).toBeDefined()
         expect(traceContext?.version).toEqual('00')
@@ -62,9 +60,7 @@ describe('Trace Service middleware', () => {
             traceparent: '00-1bf7451216ad43dd6748ac211c8031a1-a7126b71d92f333e-01',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext).toBeDefined()
         expect(traceContext?.version).toEqual('00')
@@ -94,9 +90,7 @@ describe('Trace Service middleware', () => {
             traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext?.isSampled).toBeTruthy()
     })
@@ -106,9 +100,7 @@ describe('Trace Service middleware', () => {
             traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext?.isSampled).toBeFalsy()
     })
