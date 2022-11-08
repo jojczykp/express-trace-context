@@ -9,6 +9,7 @@ export interface TraceContext {
     parentId: string
     childId: string
     isSampled: boolean
+    traceState?: string
 }
 
 const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
@@ -31,6 +32,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
         parentId,
         childId,
         isSampled,
+        traceState: req.header('tracestate'),
     }
 
     setTraceContext(traceContext)

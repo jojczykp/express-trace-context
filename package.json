@@ -9,7 +9,8 @@
     "express",
     "open-trace",
     "trace",
-    "trace-context"
+    "trace-context",
+    "distributed trace"
   ],
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json coverage",

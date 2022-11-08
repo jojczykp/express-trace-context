@@ -5,7 +5,7 @@ import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from 
 
 const hexNum16 = /^[0-9a-f]{16}$/
 
-describe('Trace Service middleware produces Trace Context that', () => {
+describe('Trace Service middleware', () => {
     let traceContext: TraceContext | undefined
     let res: Response
 
@@ -15,7 +15,7 @@ describe('Trace Service middleware produces Trace Context that', () => {
         setTraceContext(traceContext)
     })
 
-    it('should have updated parent-id', () => {
+    it('should produce full TraceContext', () => {
         const req = mockRequest({
             traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01',
             tracestate: 'vendor1=opaque1,vendor2=opaque2',
@@ -31,11 +31,32 @@ describe('Trace Service middleware produces Trace Context that', () => {
         expect(traceContext?.parentId).toEqual('b7ad6b7169203331')
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeTruthy()
+        expect(traceContext?.traceState).toEqual('vendor1=opaque1,vendor2=opaque2')
         expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
         expect(res.header).toBeCalledTimes(1)
     })
 
-    it('should be undefined if no traceparent header present', () => {
+    it('should produce TraceContext with no tracestate is no such a header present', () => {
+        const req = mockRequest({
+            traceparent: '00-1bf7451216ad43dd6748ac211c8031a1-a7126b71d92f333e-01',
+        })
+
+        traceMiddleware(req, res, () => {
+            traceContext = getTraceContext()
+        })
+
+        expect(traceContext).toBeDefined()
+        expect(traceContext?.version).toEqual('00')
+        expect(traceContext?.traceId).toEqual('1bf7451216ad43dd6748ac211c8031a1')
+        expect(traceContext?.parentId).toEqual('a7126b71d92f333e')
+        expect(traceContext?.childId).toMatch(hexNum16)
+        expect(traceContext?.isSampled).toBeTruthy()
+        expect(traceContext?.traceState).toBeUndefined()
+        expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
+        expect(res.header).toBeCalledTimes(1)
+    })
+
+    it('should not produce Trace Context if no traceparent header present', () => {
         const req = mockRequest({
             tracestate: 'vendor1=opaque1,vendor2=opaque2',
         })

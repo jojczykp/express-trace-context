@@ -4,8 +4,6 @@ import { Server } from 'http'
 import { getTraceContext, traceMiddleware } from '../src/trace-service'
 
 describe('Trace Service middleware', () => {
-    // TODO: Cover all other specification details
-
     it('should inject trace context and return traceresponse', done => {
         const server = express()
             .use(traceMiddleware)
@@ -15,6 +13,7 @@ describe('Trace Service middleware', () => {
         request(server)
             .get('/')
             .set('traceparent', '00-123456789abcd-12ab-01')
+            .set('tracestate', 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7')
             .expect(res => {
                 expect(res.body).toMatchObject({
                     version: '00',
@@ -22,6 +21,7 @@ describe('Trace Service middleware', () => {
                     parentId: '12ab',
                     childId: expect.stringMatching(/^[0-9a-f]{16}$/),
                     isSampled: true,
+                    traceState: 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7',
                 })
             })
             .expect(res => {
