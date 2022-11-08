@@ -18,7 +18,7 @@ describe('Trace Service middleware', () => {
     it('should produce full TraceContext', () => {
         const req = mockRequest({
             traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01',
-            tracestate: 'vendor1=opaque1,vendor2=opaque2',
+            tracestate: 'vendor1=opaque3,vendor2=opaque4',
         })
 
         traceMiddleware(req, res, () => {
@@ -31,7 +31,28 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.parentId).toEqual('b7ad6b7169203331')
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeTruthy()
-        expect(traceContext?.traceState).toEqual('vendor1=opaque1,vendor2=opaque2')
+        expect(traceContext?.traceState).toEqual('vendor1=opaque3,vendor2=opaque4')
+        expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
+        expect(res.header).toBeCalledTimes(1)
+    })
+
+    it('should produce full TraceContext even if headers passed are not in lowercase', () => {
+        const req = mockRequest({
+            TrAcEpArEnT: '00-0af7651926cd43dd5448cb211c80319c-b7ad3b7169203def-01',
+            tRaCeStAtE: 'vendor1=opaque5,vendor2=opaque6',
+        })
+
+        traceMiddleware(req, res, () => {
+            traceContext = getTraceContext()
+        })
+
+        expect(traceContext).toBeDefined()
+        expect(traceContext?.version).toEqual('00')
+        expect(traceContext?.traceId).toEqual('0af7651926cd43dd5448cb211c80319c')
+        expect(traceContext?.parentId).toEqual('b7ad3b7169203def')
+        expect(traceContext?.childId).toMatch(hexNum16)
+        expect(traceContext?.isSampled).toBeTruthy()
+        expect(traceContext?.traceState).toEqual('vendor1=opaque5,vendor2=opaque6')
         expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
         expect(res.header).toBeCalledTimes(1)
     })
@@ -107,9 +128,10 @@ describe('Trace Service middleware', () => {
 })
 
 function mockRequest(headers: Record<string, string>): Request {
+    const headersLowCase = lowCaseKeys(headers)
     return {
-        header(h: string) {
-            return headers[h]
+        get(h: string) {
+            return headersLowCase[h.toLowerCase()]
         },
     } as unknown as Request
 }
@@ -118,4 +140,10 @@ function mockResponse(): Response {
     return {
         header: jest.fn(),
     } as unknown as Response
+}
+
+function lowCaseKeys(record: Record<string, string>) {
+    return Object.keys(record)
+        .map(k => Object({ [k.toLowerCase()]: record[k] }))
+        .reduce((acc, curr) => Object.assign(acc, curr))
 }

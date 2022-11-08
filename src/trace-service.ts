@@ -15,7 +15,7 @@ export interface TraceContext {
 const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
-    const traceParent = req.header('traceparent')
+    const traceParent = req.get('traceparent')
     if (!traceParent) {
         next()
         return
@@ -32,7 +32,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
         parentId,
         childId,
         isSampled,
-        traceState: req.header('tracestate'),
+        traceState: req.get('tracestate'),
     }
 
     setTraceContext(traceContext)

@@ -12,8 +12,8 @@ describe('Trace Service middleware', () => {
 
         request(server)
             .get('/')
-            .set('traceparent', '00-123456789abcd-12ab-01')
-            .set('tracestate', 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7')
+            .set('TracePaReNt', '00-123456789abcd-12ab-01')
+            .set('TrAcEstate', 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7')
             .expect(res => {
                 expect(res.body).toMatchObject({
                     version: '00',
