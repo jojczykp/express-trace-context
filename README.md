@@ -37,6 +37,7 @@ curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddee
 - https://www.w3.org/TR/trace-context/
 - https://w3c.github.io/trace-context/
 - https://nodejs.org/api/async_context.html
+- https://www.udemy.com/course/understanding-typescript/learn/lecture/17751414
 
 
 # TODOs
