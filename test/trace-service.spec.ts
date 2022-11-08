@@ -89,6 +89,30 @@ describe('Trace Service middleware', () => {
         expect(traceContext).toBeUndefined()
     })
 
+    it('should produce TraceContext with isSampled true', () => {
+        const req = mockRequest({
+            traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-01',
+        })
+
+        traceMiddleware(req, res, () => {
+            traceContext = getTraceContext()
+        })
+
+        expect(traceContext?.isSampled).toBeTruthy()
+    })
+
+    it('should produce TraceContext with isSampled false', () => {
+        const req = mockRequest({
+            traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-00',
+        })
+
+        traceMiddleware(req, res, () => {
+            traceContext = getTraceContext()
+        })
+
+        expect(traceContext?.isSampled).toBeFalsy()
+    })
+
     it('should be a different instance for each concurrent request', async () => {
         // Given
         let traceContext1: TraceContext | undefined
