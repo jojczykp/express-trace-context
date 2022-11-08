@@ -10,6 +10,16 @@ Can be easily integrated with loggers.
 
 # Example
 
+```shell
+$ npm -v
+v8.19.2
+```
+
+```shell
+$ node -v
+v18.10.0
+```
+
 [src/example.ts](src/example.ts)
 
 Console 1:
