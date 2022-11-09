@@ -4,27 +4,30 @@ import { NextFunction, Request, Response } from 'express'
 const FLAG_SAMPLED = 0b00000001
 
 export interface TraceContext {
-    version: string
-    traceId: string
-    parentId: string
-    childId: string
-    isSampled: boolean
+    version?: string
+    traceId?: string
+    parentId?: string
+    childId?: string
+    isSampled?: boolean
     traceState?: string
 }
 
 const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
+    let version: string | undefined
+    let traceId: string | undefined
+    let parentId: string | undefined
+    let flags: string | undefined
+    let isSampled: boolean | undefined
+
     const traceParent = req.get('traceparent')
-    if (!traceParent) {
-        next()
-        return
+    if (traceParent) {
+        ;[version, traceId, parentId, flags] = traceParent.split('-')
+        isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
     }
 
-    const [version, traceId, parentId, flags] = traceParent.split('-')
-
-    const childId = randomHexString(8) + randomHexString(8)
-    const isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
+    const childId = newChildId()
 
     const traceContext: TraceContext = {
         version,
@@ -37,10 +40,12 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
 
     setTraceContext(traceContext)
 
-    res.header('traceresponse', `${version}-${traceId}-${childId}-${isSampled ? '01' : '00'}`)
+    res.header('traceresponse', `${version ?? '?'}-${traceId ?? '?'}-${childId}-${flags ?? '?'}`)
     next()
+}
 
-    // TODO: Cover all other specification details
+function newChildId() {
+    return randomHexString(8) + randomHexString(8)
 }
 
 function randomHexString(length: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13): string {

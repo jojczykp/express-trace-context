@@ -46,19 +46,6 @@ describe('Trace Service middleware', () => {
             .expect(res => expect(res.get('traceresponse')).toBeDefined())
             .end(closeAndDone(server, done))
     })
-
-    it('should not inject trace context and not return traceresponse if traceparent is not passed', done => {
-        const server = express()
-            .use(traceMiddleware)
-            .get('/', (req, res) => res.json(getTraceContext() ?? {}).end())
-            .listen()
-
-        request(server)
-            .get('/')
-            .expect(res => expect(res.body).toEqual({}))
-            .expect(res => expect(res.get('traceresponse')).toBeUndefined())
-            .end(closeAndDone(server, done))
-    })
 })
 
 function closeAndDone<T>(server: Server, done: jest.DoneCallback) {

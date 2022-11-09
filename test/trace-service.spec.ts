@@ -73,16 +73,24 @@ describe('Trace Service middleware', () => {
         expect(res.header).toBeCalledTimes(1)
     })
 
-    it('should not produce Trace Context if no traceparent header present', () => {
+    it('should produce Trace Context with no traceparent details if no traceparent header present', () => {
         const req = mockRequest({
-            tracestate: 'vendor1=opaque1,vendor2=opaque2',
+            tracestate: 'vendor1=opaque7,vendor2=opaque8',
         })
 
         traceMiddleware(req, res, () => {
             traceContext = getTraceContext()
         })
 
-        expect(traceContext).toBeUndefined()
+        expect(traceContext).toBeDefined()
+        expect(traceContext?.version).toBeUndefined()
+        expect(traceContext?.traceId).toBeUndefined()
+        expect(traceContext?.parentId).toBeUndefined()
+        expect(traceContext?.childId).toMatch(hexNum16)
+        expect(traceContext?.isSampled).toBeUndefined()
+        expect(traceContext?.traceState).toEqual('vendor1=opaque7,vendor2=opaque8')
+        expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
+        expect(res.header).toBeCalledTimes(1)
     })
 
     it('should produce TraceContext with isSampled true', () => {
