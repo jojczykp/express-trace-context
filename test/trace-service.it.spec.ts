@@ -12,20 +12,20 @@ describe('Trace Service middleware', () => {
 
         request(server)
             .get('/')
-            .set('TracePaReNt', '00-123456789abcd-12ab-01')
+            .set('TracePaReNt', '00-1234567890abcdef1234567890abcdef-fedcba0987654321-01')
             .set('TrAcEstate', 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7')
             .expect(res => {
                 expect(res.body).toMatchObject({
                     version: '00',
-                    traceId: '123456789abcd',
-                    parentId: '12ab',
+                    traceId: '1234567890abcdef1234567890abcdef',
+                    parentId: 'fedcba0987654321',
                     childId: expect.stringMatching(/^[0-9a-f]{16}$/),
                     isSampled: true,
                     traceState: 'congo=ucfJifl5GOE,rojo=00f067aa0ba902b7',
                 })
             })
             .expect(res => {
-                expect(res.get('traceresponse')).toMatch(/^00-123456789abcd-[0-9a-f]{16}-01$/)
+                expect(res.get('traceresponse')).toMatch(/^00-1234567890abcdef1234567890abcdef-[0-9a-f]{16}-01$/)
             })
             .end(closeAndDone(server, done))
     })
@@ -39,7 +39,7 @@ describe('Trace Service middleware', () => {
 
         request(server)
             .post('/')
-            .set('traceparent', '00-123456789abcd-12ab-01')
+            .set('traceparent', '00-1234567890abcdef1234567890abcdef-fedcba0987654321-01')
             .set('content-type', 'application/json')
             .send({ some: 'body' })
             .expect(res => expect(res.body).toBeDefined())

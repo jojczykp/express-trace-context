@@ -3,11 +3,13 @@ import { NextFunction, Request, Response } from 'express'
 
 const FLAG_SAMPLED = 0b00000001
 
+const hexNum16 = /^[0-9a-f]{16}$/
+
 export interface TraceContext {
     version?: string
     traceId?: string
     parentId?: string
-    childId?: string
+    childId: string
     isSampled?: boolean
     traceState?: string
 }
@@ -15,32 +17,25 @@ export interface TraceContext {
 const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
-    let version: string | undefined
-    let traceId: string | undefined
-    let parentId: string | undefined
-    let flags: string | undefined
-    let isSampled: boolean | undefined
+    const traceContext: TraceContext = {
+        childId: newChildId(),
+        traceState: req.get('tracestate'),
+    }
 
     const traceParent = req.get('traceparent')
     if (traceParent) {
-        ;[version, traceId, parentId, flags] = traceParent.split('-')
-        isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
-    }
-
-    const childId = newChildId()
-
-    const traceContext: TraceContext = {
-        version,
-        traceId,
-        parentId,
-        childId,
-        isSampled,
-        traceState: req.get('tracestate'),
+        const [version, traceId, parentId, flags] = traceParent.split('-')
+        if (hexNum16.test(parentId)) {
+            traceContext.version = version
+            traceContext.traceId = traceId
+            traceContext.parentId = parentId
+            traceContext.isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
+        }
     }
 
     setTraceContext(traceContext)
 
-    res.header('traceresponse', `${version ?? '?'}-${traceId ?? '?'}-${childId}-${flags ?? '?'}`)
+    res.header('traceresponse', formatTraceresponse(traceContext))
     next()
 }
 
@@ -52,6 +47,15 @@ function randomHexString(length: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 1
     return Math.random()
         .toString(16)
         .substring(2, length + 2)
+}
+
+function formatTraceresponse(traceContext: TraceContext): string {
+    const flagsStr = traceContext.isSampled === undefined ? '?' : toHexStr(traceContext.isSampled)
+    return `${traceContext.version ?? '?'}-${traceContext.traceId ?? '?'}-${traceContext.childId}-${flagsStr}`
+}
+
+function toHexStr(b: boolean): string {
+    return b ? '01' : '00'
 }
 
 export function getTraceContext(): TraceContext | undefined {

@@ -78,9 +78,7 @@ describe('Trace Service middleware', () => {
             tracestate: 'vendor1=opaque7,vendor2=opaque8',
         })
 
-        traceMiddleware(req, res, () => {
-            traceContext = getTraceContext()
-        })
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
 
         expect(traceContext).toBeDefined()
         expect(traceContext?.version).toBeUndefined()
@@ -89,6 +87,25 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeUndefined()
         expect(traceContext?.traceState).toEqual('vendor1=opaque7,vendor2=opaque8')
+        expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
+        expect(res.header).toBeCalledTimes(1)
+    })
+
+    it('should produce Trace Context with no traceparent details if parent-id is invalid', () => {
+        const req = mockRequest({
+            traceparent: '00-1bf7451216ad43dd6748ac211c8031a1-invalid-00',
+            tracestate: 'vendor1=opaque9,vendor2=opaque10',
+        })
+
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
+
+        expect(traceContext).toBeDefined()
+        expect(traceContext?.version).toBeUndefined()
+        expect(traceContext?.traceId).toBeUndefined()
+        expect(traceContext?.parentId).toBeUndefined()
+        expect(traceContext?.childId).toMatch(hexNum16)
+        expect(traceContext?.isSampled).toBeUndefined()
+        expect(traceContext?.traceState).toEqual('vendor1=opaque9,vendor2=opaque10')
         expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
         expect(res.header).toBeCalledTimes(1)
     })
@@ -117,8 +134,8 @@ describe('Trace Service middleware', () => {
         // Given
         let traceContext1: TraceContext | undefined
         let traceContext2: TraceContext | undefined
-        const req1 = mockRequest({ traceparent: '00-1111-11-00' })
-        const req2 = mockRequest({ traceparent: '00-2222-22-01' })
+        const req1 = mockRequest({ traceparent: '00-11111111111111111111111111111111-1111111111111111-00' })
+        const req2 = mockRequest({ traceparent: '00-22222222222222222222222222222222-2222222222222222-01' })
         const res1 = mockResponse()
         const res2 = mockResponse()
         const bothContextsFilled = makeBarrier(2)
