@@ -130,6 +130,16 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.isSampled).toBeFalsy()
     })
 
+    it('should produce TraceContext with flags other than isSampled to 0', () => {
+        const req = mockRequest({
+            traceparent: '00-0af7651916cd43dd8448eb211c80319c-b7ad6b7169203331-ff',
+        })
+
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
+
+        expect(res.header).toBeCalledWith('traceresponse', `00-${traceContext?.traceId}-${traceContext?.childId}-01`)
+    })
+
     it('should be a different instance for each concurrent request', async () => {
         // Given
         let traceContext1: TraceContext | undefined

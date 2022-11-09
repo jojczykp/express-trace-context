@@ -29,7 +29,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
             traceContext.version = version
             traceContext.traceId = traceId
             traceContext.parentId = parentId
-            traceContext.isSampled = (+flags & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
+            traceContext.isSampled = (parseInt(flags, 16) & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
         }
     }
 
