@@ -86,7 +86,7 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.parentId).toBeUndefined()
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeUndefined()
-        expect(traceContext?.traceState).toEqual('vendor1=opaque7,vendor2=opaque8')
+        expect(traceContext?.traceState).toBeUndefined()
         expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
         expect(res.header).toBeCalledTimes(1)
     })
@@ -105,7 +105,7 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.parentId).toBeUndefined()
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeUndefined()
-        expect(traceContext?.traceState).toEqual('vendor1=opaque123,vendor2=opaque99')
+        expect(traceContext?.traceState).toBeUndefined()
         expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
         expect(res.header).toBeCalledTimes(1)
     })
@@ -124,7 +124,7 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.parentId).toBeUndefined()
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeUndefined()
-        expect(traceContext?.traceState).toEqual('vendor1=opaque77,vendor2=opaque88')
+        expect(traceContext?.traceState).toBeUndefined()
         expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
         expect(res.header).toBeCalledTimes(1)
     })
@@ -143,7 +143,26 @@ describe('Trace Service middleware', () => {
         expect(traceContext?.parentId).toBeUndefined()
         expect(traceContext?.childId).toMatch(hexNum16)
         expect(traceContext?.isSampled).toBeUndefined()
-        expect(traceContext?.traceState).toEqual('vendor1=opaque99,vendor2=opaque101')
+        expect(traceContext?.traceState).toBeUndefined()
+        expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
+        expect(res.header).toBeCalledTimes(1)
+    })
+
+    it('should produce Trace Context with no traceparent details if traceparent format is invalid', () => {
+        const req = mockRequest({
+            traceparent: 'invalid',
+            tracestate: 'vendor1=opaque999,vendor2=opaque102',
+        })
+
+        traceMiddleware(req, res, () => (traceContext = getTraceContext()))
+
+        expect(traceContext).toBeDefined()
+        expect(traceContext?.version).toBeUndefined()
+        expect(traceContext?.traceId).toBeUndefined()
+        expect(traceContext?.parentId).toBeUndefined()
+        expect(traceContext?.childId).toMatch(hexNum16)
+        expect(traceContext?.isSampled).toBeUndefined()
+        expect(traceContext?.traceState).toBeUndefined()
         expect(res.header).toBeCalledWith('traceresponse', `?-?-${traceContext?.childId}-?`)
         expect(res.header).toBeCalledTimes(1)
     })

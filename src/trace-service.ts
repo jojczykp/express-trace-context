@@ -19,7 +19,6 @@ const asyncLocalStorage = new AsyncLocalStorage<TraceContext>()
 export function traceMiddleware(req: Request, res: Response, next: NextFunction) {
     const traceContext: TraceContext = {
         childId: newChildId(),
-        traceState: req.get('tracestate'),
     }
 
     const traceParent = req.get('traceparent')
@@ -29,6 +28,7 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
         traceContext.traceId = traceId
         traceContext.parentId = parentId
         traceContext.isSampled = (parseInt(flags, 16) & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
+        traceContext.traceState = req.get('tracestate')
     }
 
     setTraceContext(traceContext)
