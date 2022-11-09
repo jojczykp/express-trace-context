@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from 'express'
 
 const FLAG_SAMPLED = 0b00000001
 
-const hexNum16 = /^[0-9a-f]{16}$/
+const traceparentPattern = /^00-[0-9a-f]{32}-[0-9a-f]{16}-[0-9a-f]{2}$/
 
 export interface TraceContext {
     version?: string
@@ -23,14 +23,12 @@ export function traceMiddleware(req: Request, res: Response, next: NextFunction)
     }
 
     const traceParent = req.get('traceparent')
-    if (traceParent) {
+    if (traceParent && traceparentPattern.test(traceParent)) {
         const [version, traceId, parentId, flags] = traceParent.split('-')
-        if (hexNum16.test(parentId)) {
-            traceContext.version = version
-            traceContext.traceId = traceId
-            traceContext.parentId = parentId
-            traceContext.isSampled = (parseInt(flags, 16) & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
-        }
+        traceContext.version = version
+        traceContext.traceId = traceId
+        traceContext.parentId = parentId
+        traceContext.isSampled = (parseInt(flags, 16) & FLAG_SAMPLED) === FLAG_SAMPLED // eslint-disable-line no-bitwise
     }
 
     setTraceContext(traceContext)
