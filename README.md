@@ -29,7 +29,7 @@ ts-node src/example.ts
 
 Console 2:
 ```shell
-curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddeeff-1234567890abcdef-01' -H 'Content-Type: application/json' -d '{ "some": "json body" }' | jq .
+curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddeeff-1234567890abcdef-01' -H 'tracestate: congo=ucfJifl5GOE,rojo=00f067aa0ba902b7' -H 'Content-Type: application/json' -d '{ "some": "json body" }' | jq .
 ```
 
 
