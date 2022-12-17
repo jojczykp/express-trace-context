@@ -1,10 +1,23 @@
 {
   "name": "express-trace-context",
   "version": "0.0.1",
-  "description": "express trace context",
-  "homepage": "https://github.com/jojczykp/express-trace-context",
+  "description": "Trace context handling for express 4",
+  "homepage": "https://github.com/jojczykp/express-trace-context#readme",
   "author": "Paweł Jojczyk",
   "license": "MIT",
+  "main": "./dist/trace-service.js",
+  "files": [
+    "dist",
+    "LICENSE.md",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jojczykp/express-trace-context.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jojczykp/express-trace-context/issues"
+  },
   "keywords": [
     "express",
     "open-trace",
@@ -13,7 +26,8 @@
     "distributed trace"
   ],
   "scripts": {
-    "clean": "rm -rf node_modules package-lock.json coverage",
+    "build": "tsc",
+    "clean": "rm -rf node_modules package-lock.json coverage dist",
     "lint": "eslint './src' './test' --ext .ts",
     "lint:fix": "eslint './src' './test' --ext .ts --fix",
     "test": "jest --coverage --coverageDirectory='coverage'",

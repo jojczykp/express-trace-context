@@ -27,18 +27,28 @@ Console 1:
 ts-node src/example.ts
 ```
 
+```
+Server started on port 3000
+```
+
 Console 2:
 ```shell
 curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddeeff-1234567890abcdef-01' -H 'tracestate: congo=ucfJifl5GOE,rojo=00f067aa0ba902b7' -H 'Content-Type: application/json' -d '{ "some": "json body" }' | jq .
 ```
 
+```
+{
+  "traceContext": {
+... (details from request propagated here) ...
+```
+
+Also note logs in _Console 1_.
 
 # References
 - https://www.w3.org/TR/trace-context/
 - https://w3c.github.io/trace-context/
 - https://nodejs.org/api/async_context.html
 - https://www.udemy.com/course/understanding-typescript/learn/lecture/17751414
-
 
 # TODOs
 - Implement rest of specification details
