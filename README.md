@@ -1,36 +1,34 @@
 # Express Trace Context
 
-`traceheader` based Trace Context for [express.js](https://expressjs.com/).
+Trace Context handling for [express.js](https://expressjs.com/), based on `traceheader` and `tracestate`.
 
-Can be easily integrated with loggers.
-
+Can be easily integrated with loggers:
 - `.use(traceMiddleware)` in server setup.
 - Call `getTraceContext()` (i.e. in your logging method) to get access to details from `traceparent` and `tracestate` HTTP headers.
 
 
+# Usage
+
+```shell
+npm i express-trace-context
+```
+See example at [example/example.ts](example/example.ts)
+
+
 # Example
 
-```shell
-$ npm -v
-```
-
-```
-v8.19.2
-```
-
-```shell
-$ node -v
-```
-
-```
-v18.10.0
-```
-
-[example/example.ts](example/example.ts)
-
 Console 1:
+
 ```shell
-ts-node example/example.ts
+cd example
+```
+
+```shell
+npm install
+```
+
+```shell
+ts-node example.ts
 ```
 
 ```
@@ -38,6 +36,7 @@ Server started on port 3000
 ```
 
 Console 2:
+
 ```shell
 curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddeeff-1234567890abcdef-01' -H 'tracestate: congo=ucfJifl5GOE,rojo=00f067aa0ba902b7' -H 'Content-Type: application/json' -d '{ "some": "json body" }' | jq .
 ```
@@ -50,6 +49,33 @@ curl -s http://localhost:3000 -H 'traceparent: 00-11223344556677889900aabbccddee
 
 Also note logs in _Console 1_.
 
+
+# Develop
+
+```shell
+npm run clean
+```
+
+```shell
+npm install
+```
+
+```shell
+npm run lint
+```
+
+```shell
+npm run test
+```
+
+```shell
+npm run build
+```
+
+```shell
+npm push
+```
+
 # References
 - https://www.w3.org/TR/trace-context/
 - https://w3c.github.io/trace-context/
@@ -57,4 +83,4 @@ Also note logs in _Console 1_.
 - https://www.udemy.com/course/understanding-typescript/learn/lecture/17751414
 
 # TODOs
-- Implement rest of specification details
+- Implement remaining of specification details once stable
