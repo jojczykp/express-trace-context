@@ -2,7 +2,7 @@
   "name": "express-trace-context-example",
   "version": "0.0.1",
   "description": "Example of express-trace-context usage",
-  "author": "Paweł Jojczyk",
+  "author": "Pawel Jojczyk",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf node_modules package-lock.json coverage dist"

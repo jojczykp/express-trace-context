@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Trace context handling for express 4",
   "homepage": "https://github.com/jojczykp/express-trace-context#readme",
-  "author": "Paweł Jojczyk",
+  "author": "Pawel Jojczyk",
   "license": "MIT",
   "main": "./dist/express-trace-context.js",
   "files": [
