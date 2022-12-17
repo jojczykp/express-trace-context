@@ -3,7 +3,7 @@ import { getTraceContext, traceMiddleware } from 'express-trace-context'
 
 const SERVER_PORT = 3000
 
-function logger(msg: string) {
+function log(msg: string) {
     const tc = getTraceContext()
     const prefix = tc ? `[${tc?.version} ${tc?.traceId} ${tc?.parentId} ${tc?.isSampled}] ` : ''
 
@@ -11,7 +11,7 @@ function logger(msg: string) {
 }
 
 const routes = Router().post('/', (req, res) => {
-    logger(`Received: ${JSON.stringify(req.body)}`)
+    log(`Received: ${JSON.stringify(req.body)}`)
     res.status(200)
     res.json({
         traceContext: getTraceContext(),
@@ -26,4 +26,4 @@ const server = express()
     .use(routes)
     .use((req, res) => res.status(404).send({ error: 'Not Found' }))
 
-server.listen(SERVER_PORT, () => logger(`Server started on port ${SERVER_PORT}`))
+server.listen(SERVER_PORT, () => log(`Server started on port ${SERVER_PORT}`))
