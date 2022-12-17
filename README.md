@@ -1,10 +1,10 @@
 # Express Trace Context
 
-Trace Context handling for [express.js](https://expressjs.com/), based on `traceheader` and `tracestate`.
+W3C Trace Context handling for [express.js](https://expressjs.com/), based on `traceheader` and `tracestate`.
 
 Can be easily integrated with loggers:
-- `.use(traceMiddleware)` in server setup.
-- Call `getTraceContext()` (i.e. in your logging method) to get access to details from `traceparent` and `tracestate` HTTP headers.
+- Call `.use(traceMiddleware)` in server setup.
+- Call `getTraceContext()` in your logging method.
 
 
 # Usage
@@ -28,7 +28,7 @@ npm install
 ```
 
 ```shell
-ts-node example.ts
+npx ts-node example.ts
 ```
 
 ```
