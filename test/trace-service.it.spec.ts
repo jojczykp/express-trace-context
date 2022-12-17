@@ -1,7 +1,7 @@
 import express, { json } from 'express'
 import request from 'supertest'
 import { Server } from 'http'
-import { getTraceContext, traceMiddleware } from '../src/trace-service'
+import { getTraceContext, traceMiddleware } from '../src/express-trace-context'
 
 describe('Trace Service middleware', () => {
     it('should inject trace context and return traceresponse', done => {

@@ -5,7 +5,7 @@
   "homepage": "https://github.com/jojczykp/express-trace-context#readme",
   "author": "Paweł Jojczyk",
   "license": "MIT",
-  "main": "./dist/trace-service.js",
+  "main": "./dist/express-trace-context.js",
   "files": [
     "dist",
     "LICENSE.md",

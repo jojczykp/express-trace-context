@@ -1,7 +1,7 @@
 import makeBarrier from '@strong-roots-capital/barrier'
 import { Request, Response } from 'express'
 import { expect, jest } from '@jest/globals'
-import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from '../src/trace-service'
+import { TraceContext, traceMiddleware, getTraceContext, setTraceContext } from '../src/express-trace-context'
 
 /* eslint no-return-assign: "off" */
 
