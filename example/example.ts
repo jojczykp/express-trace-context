@@ -1,5 +1,5 @@
 import express, { json, Router } from 'express'
-import { getTraceContext, traceMiddleware } from './trace-service'
+import { getTraceContext, traceMiddleware } from '../src/trace-service'
 
 const SERVER_PORT = 3000
 

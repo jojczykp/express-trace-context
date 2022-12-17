@@ -28,8 +28,8 @@
   "scripts": {
     "build": "tsc",
     "clean": "rm -rf node_modules package-lock.json coverage dist",
-    "lint": "eslint './src' './test' --ext .ts",
-    "lint:fix": "eslint './src' './test' --ext .ts --fix",
+    "lint": "eslint './src' './test' './example' --ext .ts",
+    "lint:fix": "eslint './src' './test' './example' --ext .ts --fix",
     "test": "jest --coverage --coverageDirectory='coverage'",
     "test:watch": "jest --watch"
   },

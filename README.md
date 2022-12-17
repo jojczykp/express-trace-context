@@ -20,11 +20,11 @@ $ node -v
 v18.10.0
 ```
 
-[src/example.ts](src/example.ts)
+[example/example.ts](example/example.ts)
 
 Console 1:
 ```shell
-ts-node src/example.ts
+ts-node example/example.ts
 ```
 
 ```
