@@ -12,11 +12,17 @@ Can be easily integrated with loggers.
 
 ```shell
 $ npm -v
+```
+
+```
 v8.19.2
 ```
 
 ```shell
 $ node -v
+```
+
+```
 v18.10.0
 ```
 
