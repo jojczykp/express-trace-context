@@ -1,6 +1,6 @@
 {
   "name": "express-trace-context",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Trace context handling for express 4",
   "homepage": "https://github.com/jojczykp/express-trace-context#readme",
   "author": "Pawel Jojczyk",
